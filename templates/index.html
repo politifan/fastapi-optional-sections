@@ -3,36 +3,112 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Главная · FastAPI</title>
-    <style>
-        * { box-sizing: border-box; }
-        body { margin: 0; background: #f0f6f4; color: #193831; font: 1rem/1.6 system-ui, sans-serif; }
-        main { max-width: 48rem; margin: auto; padding: clamp(2rem, 8vw, 5rem) 1.25rem; }
-        header { border-bottom: 2px solid #327461; padding-bottom: 1.5rem; }
-        h1 { font-size: clamp(2rem, 7vw, 3.25rem); line-height: 1.1; margin: 0 0 1rem; }
-        section { background: white; border: 1px solid #c9ddd5; border-radius: .75rem; padding: 1.25rem; margin-top: 1rem; }
-        h2 { margin: 0 0 .5rem; font-size: 1.25rem; }
-        p { margin: 0; overflow-wrap: anywhere; }
-    </style>
+    <meta name="theme-color" content="#101917">
+    <meta name="description" content="Интерактивный оммаж фильму «Один день» — история Эммы и Декстера в трёх городах.">
+    <title>Один день · One Day</title>
+    <link rel="icon" href="{{ url_for('static', path='/favicon.png') }}" type="image/png">
+    <link rel="stylesheet" href="{{ url_for('static', path='/site.css') }}">
+    <script src="{{ url_for('static', path='/site.js') }}" defer></script>
 </head>
 <body>
-    <main>
-        <header>
-            <h1>Сайт на FastAPI</h1>
-            <p>Главная страница доступна при любой конфигурации.</p>
-        </header>
-        {% if announcement %}
-        <section id="announcement" aria-labelledby="announcement-title">
-            <h2 id="announcement-title">Объявление</h2>
-            <p>{{ announcement }}</p>
+    <a class="skip" href="#content">К содержанию</a>
+    <header class="top">
+        <div class="wrap top-inner">
+            <a class="wordmark" href="#content" aria-label="Один день, на главную">ONE<span>DAY</span><i></i></a>
+            <nav aria-label="Навигация">
+                <a href="#chapters">Главы</a>
+                <a href="#film">О фильме</a>
+                {% if contact %}<a href="#contact">Контакты</a>{% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <main id="content">
+        <section class="hero" aria-labelledby="title">
+            <div class="wrap hero-inner">
+                <div class="hero-copy">
+                    <p class="eyebrow"><span></span> ФИЛЬМ ЛОНЕ ШЕРФИГ <b>·</b> 2011</p>
+                    <h1 id="title">Один<br><em>день</em><span>.</span></h1>
+                    <p class="hero-description">Две жизни, почти двадцать лет.<br> И одна дата, к которой мы возвращаемся — 15 июля.</p>
+                    <a class="primary" href="#chapters">Перейти к главам</a>
+                </div>
+                <div class="hero-caption" aria-label="Эдинбург, 15 июля 1988 года">
+                    <span>ЭДИНБУРГ</span><strong>15.07.1988</strong>
+                </div>
+            </div>
         </section>
+
+        {% if announcement %}
+        <aside class="wrap notice" id="announcement" aria-labelledby="announcement-title">
+            <h2 id="announcement-title">Объявление</h2><p>{{ announcement }}</p>
+        </aside>
         {% endif %}
+
+        <section class="chapters wrap" id="chapters" aria-labelledby="chapters-title">
+            <div class="section-heading">
+                <p class="eyebrow"><span></span> МАРШРУТ ЭММЫ И ДЕКСТЕРА</p>
+                <h2 id="chapters-title">По обе стороны <em>15 июля</em></h2>
+                <p>Три города, через которые проходит их история. Выберите открытку, чтобы открыть главу.</p>
+            </div>
+            <div class="chapter-grid">
+                <div class="stage" aria-label="Объёмная галерея открыток">
+                    <div class="deck">
+                        {% for chapter in chapters %}
+                        <button class="postcard" type="button" data-chapter="{{ loop.index0 }}" data-position="{{ [0, 1, -1][loop.index0] }}" aria-controls="chapter-note" aria-pressed="{{ 'true' if loop.first else 'false' }}" aria-label="{{ chapter.city }}">
+                            <img src="{{ url_for('static', path='/' ~ chapter.image) }}" alt="">
+                            <span><small>{{ chapter.label }}</small><strong>{{ chapter.city }}</strong></span>
+                        </button>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="chapter-note" id="chapter-note" aria-live="polite">
+                    {% for chapter in chapters %}
+                    <article data-note="{{ loop.index0 }}"{% if not loop.first %} hidden{% endif %}>
+                        <p class="eyebrow">{{ chapter.label }}</p>
+                        <h3>{{ chapter.city }}</h3>
+                        <p>{{ chapter.text }}</p>
+                    </article>
+                    {% endfor %}
+                    <div class="chapter-controls" aria-label="Переключение главы">
+                        <button type="button" data-step="-1" aria-label="Предыдущая глава">‹</button>
+                        <span class="chapter-count" aria-hidden="true">01 / 03</span>
+                        <button type="button" data-step="1" aria-label="Следующая глава">›</button>
+                    </div>
+                </div>
+            </div>
+            <noscript>
+                <ul class="chapter-list">{% for chapter in chapters %}<li><strong>{{ chapter.city }}</strong> — {{ chapter.text }}</li>{% endfor %}</ul>
+            </noscript>
+        </section>
+
+        <section class="film" id="film" aria-labelledby="film-title">
+            <div class="wrap film-inner">
+                <div>
+                    <p class="eyebrow"><span></span> ONE DAY <b>·</b> 2011</p>
+                    <h2 id="film-title">О фильме</h2>
+                </div>
+                <div>
+                    <p>Эмма Морли и Декстер Мэйхью сближаются в ночь после выпуска в Эдинбурге. Фильм возвращается к ним 15 июля в разные годы, пока дружба меняет их обоих.</p>
+                    <dl>
+                        <div><dt>Режиссёр</dt><dd>Лоне Шерфиг</dd></div>
+                        <div><dt>В главных ролях</dt><dd>Энн Хэтэуэй и Джим Стёрджесс</dd></div>
+                        <div><dt>По роману</dt><dd>Дэвида Николлса</dd></div>
+                    </dl>
+                    <a href="https://www.focusfeatures.com/one_day">Страница фильма на Focus Features</a>
+                </div>
+            </div>
+        </section>
+
         {% if contact %}
-        <section id="contact" aria-labelledby="contact-title">
-            <h2 id="contact-title">Контакты</h2>
-            <p>{{ contact }}</p>
+        <section class="wrap notice contact" id="contact" aria-labelledby="contact-title">
+            <h2 id="contact-title">Контакты</h2><p>{{ contact }}</p>
         </section>
         {% endif %}
     </main>
+
+    <footer class="wrap footer">
+        <a class="wordmark" href="#content" aria-label="Один день, наверх">ONE<span>DAY</span><i></i></a>
+        <p>Фан-проект по фильму «Один день»</p>
+    </footer>
 </body>
 </html>
