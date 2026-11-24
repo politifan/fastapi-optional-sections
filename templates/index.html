@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Главная · FastAPI</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; background: #f0f6f4; color: #193831; font: 1rem/1.6 system-ui, sans-serif; }
+        main { max-width: 48rem; margin: auto; padding: clamp(2rem, 8vw, 5rem) 1.25rem; }
+        header { border-bottom: 2px solid #327461; padding-bottom: 1.5rem; }
+        h1 { font-size: clamp(2rem, 7vw, 3.25rem); line-height: 1.1; margin: 0 0 1rem; }
+        section { background: white; border: 1px solid #c9ddd5; border-radius: .75rem; padding: 1.25rem; margin-top: 1rem; }
+        h2 { margin: 0 0 .5rem; font-size: 1.25rem; }
+        p { margin: 0; overflow-wrap: anywhere; }
+    </style>
+</head>
+<body>
+    <main>
+        <header>
+            <h1>Сайт на FastAPI</h1>
+            <p>Главная страница доступна при любой конфигурации.</p>
+        </header>
+        {% if announcement %}
+        <section id="announcement" aria-labelledby="announcement-title">
+            <h2 id="announcement-title">Объявление</h2>
+            <p>{{ announcement }}</p>
+        </section>
+        {% endif %}
+        {% if contact %}
+        <section id="contact" aria-labelledby="contact-title">
+            <h2 id="contact-title">Контакты</h2>
+            <p>{{ contact }}</p>
+        </section>
+        {% endif %}
+    </main>
+</body>
+</html>
